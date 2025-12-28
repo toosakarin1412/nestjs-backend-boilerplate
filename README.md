@@ -1,52 +1,130 @@
-## Description
+# NestJS Boilerplate
 
-Costera Backend Service
+A robust, production-ready NestJS boilerplate featuring secure authentication, user management, file uploads, and auto-generated API documentation.
 
-## Project setup
+## 🚀 Features
 
-```bash
-$ npm install
-```
+- **Authentication**: 
+  - JWT integration (Access & Refresh Tokens).
+  - Secure Password Hashing using **Argon2** (Superior to bcrypt).
+  - Passport strategies (Local, JWT, Refresh).
+  - Role-based payload structure.
+- **User Management**:
+  - Full CRUD operations.
+  - **Avatar Upload** with `Multer` (configurable storage).
+  - TypeORM integration with MySQL.
+- **Documentation**:
+  - Full **Swagger/OpenAPI** support at `/docs`.
+  - Detailed decorators (`@ApiOperation`, `@ApiResponse`, etc.) for clear API specs.
+- **Architecture**:
+  - Modular structure (`AuthModule`, `UsersModule`).
+  - Flattened error handling (Custom Exception Filter).
+  - Validated DTOs with `class-validator`.
 
-## Compile and run the project
+## 🛠️ Prerequisites
+
+- Node.js (v18+)
+- MySQL Database
+
+## 📦 Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd <repository-name>
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Configuration**
+   Create a `.env` file in the root directory. You can copy the structure below:
+   
+   ```env
+   # Database
+   DB_HOST=localhost
+   DB_PORT=3306
+   DB_USERNAME=root
+   DB_PASSWORD=your_password
+   DB_DATABASE=<database-name>
+
+   # JWT Secrets (Change these in production!)
+   JWT_SECRET=super_secret_access_key
+   JWT_REFRESH_SECRET=super_secret_refresh_key
+   
+   # App Config
+   PORT=3000
+   AVATAR_PATH=./uploads
+   ```
+
+4. **Run Migrations (Optional/If configured)**
+   ```bash
+   npm run migration:run
+   ```
+
+## ▶️ Running the Application
 
 ```bash
 # development
-$ npm run start
+npm run start
 
 # watch mode
-$ npm run start:dev
+npm run start:dev
 
-# production mode
-$ npm run start:prod
+# production build
+npm run build
+npm run start:prod
 ```
 
-## Run tests
+## 📚 API Documentation
 
-```bash
-# unit tests
-$ npm run test
+Once the application is running, access the interactive Swagger documentation at:
 
-# e2e tests
-$ npm run test:e2e
+**[http://localhost:3000/docs](http://localhost:3000/docs)**
 
-# test coverage
-$ npm run test:cov
+This interface allows you to:
+- Explore available endpoints.
+- See request/response schemas.
+- Test endpoints directly from the browser (Authorize with your JWT token).
+
+## 📂 Project Structure
+
+```
+src/
+├── filters/             # Global filters (e.g., AllExceptionsFilter)
+├── modules/
+│   ├── auth/            # Authentication logic
+│   │   ├── dto/         # Login DTOs
+│   │   ├── guard/       # Route guards (JwtGuard, LocalAuthGuard)
+│   │   ├── strategies/  # Passport strategies (Local, Jwt, Refresh)
+│   │   └── ...
+│   └── users/           # User management
+│       ├── dto/         # Create/Update User DTOs
+│       ├── entities/    # TypeORM Entity
+│       └── ...
+├── main.ts              # App entry point & Swagger setup
+└── ...
 ```
 
-## Deployment
+## 🔑 Key Endpoints
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### Authentication
+- `POST /auth/login`: Authenticate with email/password. Returns Access & Refresh tokens.
+- `POST /auth/refresh`: Get a new Access token using a Refresh token.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Users
+- `POST /users`: Create a new user.
+- `GET /users`: List all users (Guarded).
+- `POST /users/:id/avatar`: Upload user avatar image (multipart/form-data).
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+## 🛡️ Security Best Practices Implemented
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+- **Argon2 Hashing**: Uses rigorous hashing configuration for passwords, safer than standard bcrypt.
+- **DTO Validation**: Incoming data is strictly validated using `class-validator` and `ValidationPipe`.
+- **Exception Filters**: Consistent error response format preventing leaks of stack traces to clients.
 
-## License
+## 📄 License
 
-Costera is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+[MIT licensed](LICENSE)
