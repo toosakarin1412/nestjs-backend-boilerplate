@@ -29,16 +29,19 @@ export class UsersService {
     return this.usersRepository.findOneBy({ user_uuid: id });
   }
 
+  findOneByUsername(username: string) {
+    return this.usersRepository.findOneBy({ email: username });
+  }
+
+  findByEmail(email: string) {
+    return this.usersRepository.findOneBy({ email });
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto) {
     if (updateUserDto.password) {
       const salt = randomBytes(16);
       const saltHex = salt.toString('hex');
       updateUserDto.password = await argon2.hash(updateUserDto.password, { salt });
-      // We need to cast to any or add salt to DTO if we want to save it, 
-      // but UpdateUserDto extends PartialType(CreateUserDto) which doesn't have salt.
-      // However, we can just pass the object to update. 
-      // User entity has salt. We should probably update the salt column too.
-      // Let's add salt to the object passed to update, casting it to include salt.
       (updateUserDto as any).salt = saltHex;
     }
     await this.usersRepository.update({ user_uuid: id }, updateUserDto);

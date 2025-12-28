@@ -8,13 +8,16 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dbConfig } from './config/dbconfig';
 import { UsersModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true,
     envFilePath: '.env',
   }),
   TypeOrmModule.forRoot(dbConfig),
-    UsersModule],
+    UsersModule,
+    AuthModule
+  ],
   controllers: [AppController],
   providers: [
     AppService,
