@@ -1,26 +1,52 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
+import * as argon2 from 'argon2';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class UsersService {
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+  ) { }
+
   create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+    const user = this.usersRepository.create(createUserDto);
+    return this.usersRepository.save(user);
   }
 
   findAll() {
-    return `This action returns all users`;
+    return this.usersRepository.find({
+      select: ['user_uuid', 'email', 'role', 'phone', 'avatar'],
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(id: string) {
+    return this.usersRepository.findOneBy({ user_uuid: id });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    if (updateUserDto.password) {
+      const salt = randomBytes(16);
+      const saltHex = salt.toString('hex');
+      updateUserDto.password = await argon2.hash(updateUserDto.password, { salt });
+      // We need to cast to any or add salt to DTO if we want to save it, 
+      // but UpdateUserDto extends PartialType(CreateUserDto) which doesn't have salt.
+      // However, we can just pass the object to update. 
+      // User entity has salt. We should probably update the salt column too.
+      // Let's add salt to the object passed to update, casting it to include salt.
+      (updateUserDto as any).salt = saltHex;
+    }
+    await this.usersRepository.update({ user_uuid: id }, updateUserDto);
+    return this.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    await this.usersRepository.delete({ user_uuid: id });
+    return { deleted: true };
   }
 }

@@ -6,17 +6,15 @@ import { StandardResponseInterceptor } from './interceptors/standard-response.in
 import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import db_config from './config/dbconfig';
+import { dbConfig } from './config/dbconfig';
+import { UsersModule } from './modules/users/users.module';
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true,
     envFilePath: '.env',
   }),
-  TypeOrmModule.forRootAsync({
-    imports: [ConfigModule],
-    useFactory: db_config,
-    inject: [ConfigService],
-  }),],
+  TypeOrmModule.forRoot(dbConfig),
+    UsersModule],
   controllers: [AppController],
   providers: [
     AppService,
