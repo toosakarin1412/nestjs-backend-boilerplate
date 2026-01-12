@@ -43,6 +43,7 @@ export class UsersService {
   findOne(id: string) {
     return this.usersRepository.findOne({
       where: { user_uuid: id },
+      select: ['user_id', 'user_uuid', 'email', 'phone', 'avatar'],
       relations: ['role']
     });
   }
@@ -57,6 +58,7 @@ export class UsersService {
   findOneByUsername(username: string) {
     return this.usersRepository.findOne({
       where: { email: username },
+      select: ['user_id', 'user_uuid', 'email', 'phone', 'avatar'],
       relations: ['role']
     });
   }
@@ -64,6 +66,7 @@ export class UsersService {
   findByEmail(email: string) {
     return this.usersRepository.findOne({
       where: { email },
+      select: ['user_id', 'user_uuid', 'email', 'phone', 'avatar'],
       relations: ['role']
     });
   }

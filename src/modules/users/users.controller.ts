@@ -57,6 +57,7 @@ export class UsersController {
   @Get()
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({ status: 200, description: 'List of users' })
+  @Permissions('users.read')
   findAll() {
     return this.usersService.findAll();
   }
@@ -72,6 +73,7 @@ export class UsersController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update user' })
   @ApiResponse({ status: 200, description: 'The updated user' })
+  @Permissions('users.update')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
@@ -79,6 +81,7 @@ export class UsersController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete user' })
   @ApiResponse({ status: 200, description: 'User deleted' })
+  @Permissions('users.delete')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }

@@ -18,7 +18,6 @@ export class PermissionsGuard implements CanActivate {
         const { user } = context.switchToHttp().getRequest();
 
         if (!user || !user.role || !user.role.permissions) {
-            console.warn('User or Role or Permissions missing in request context');
             return false;
         }
 
