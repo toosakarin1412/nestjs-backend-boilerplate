@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, Index, BeforeInsert } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Index, BeforeInsert, ManyToOne, JoinColumn } from 'typeorm';
+import { Role } from '../../rbac/entities/role.entity';
 import * as argon2 from 'argon2';
 import { randomBytes } from 'crypto';
 import { v7 as uuidv7 } from 'uuid';
@@ -18,8 +19,9 @@ export class User {
     @Column()
     password: string;
 
-    @Column()
-    role: string;
+    @ManyToOne(() => Role, { eager: true })
+    @JoinColumn({ name: 'role_id' })
+    role: Role;
 
     @Column({ nullable: true })
     phone: string;

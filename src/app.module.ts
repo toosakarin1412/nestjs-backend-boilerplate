@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { dbConfig } from './config/dbconfig';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { RbacModule } from './modules/rbac/rbac.module';
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true,
@@ -16,7 +17,8 @@ import { AuthModule } from './modules/auth/auth.module';
   }),
   TypeOrmModule.forRoot(dbConfig),
     UsersModule,
-    AuthModule
+    AuthModule,
+    RbacModule
   ],
   controllers: [AppController],
   providers: [

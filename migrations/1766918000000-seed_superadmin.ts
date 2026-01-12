@@ -8,17 +8,17 @@ export class SeedSuperadmin1766918000000 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         const salt = randomBytes(16);
-        const hashedPassword = await argon2.hash('superadmin@costera.id', { salt });
+        const hashedPassword = await argon2.hash('superadmin@example.com', { salt });
         const saltHex = salt.toString('hex');
         const userUuid = uuidv7();
 
         await queryRunner.query(
-            `INSERT INTO \`user\` (user_uuid, email, password, role, salt) VALUES ('${userUuid}', 'superadmin@costera.id', '${hashedPassword}', 'superadmin', '${saltHex}')`
+            `INSERT INTO \`user\` (user_uuid, email, password, role, salt) VALUES ('${userUuid}', 'superadmin@example.com', '${hashedPassword}', 'superadmin', '${saltHex}')`
         );
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DELETE FROM \`user\` WHERE email = 'superadmin@costera.id'`);
+        await queryRunner.query(`DELETE FROM \`user\` WHERE email = 'superadmin@example.com'`);
     }
 
 }
