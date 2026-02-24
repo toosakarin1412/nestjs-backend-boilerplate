@@ -40,15 +40,19 @@ export class RbacService {
     }
 
     async findAllRoles(): Promise<Role[]> {
-        // return this.roleRepository.find({ relations: ['permissions'] });
-        return this.roleRepository.find();
+        return this.roleRepository.createQueryBuilder('role')
+            .leftJoinAndSelect('role.permissions', 'permissions')
+            .loadRelationCountAndMap('role.totalUsers', 'role.users')
+            .getMany();
     }
 
     async findRoleById(id: number): Promise<Role> {
-        const role = await this.roleRepository.findOne({
-            where: { id },
-            relations: ['permissions'],
-        });
+        const role = await this.roleRepository.createQueryBuilder('role')
+            .leftJoinAndSelect('role.permissions', 'permissions')
+            .loadRelationCountAndMap('role.totalUsers', 'role.users')
+            .where('role.id = :id', { id })
+            .getOne();
+
         if (!role) {
             throw new NotFoundException(`Role with ID ${id} not found`);
         }
