@@ -60,7 +60,7 @@ export class RbacController {
 
     @Delete('roles/:id')
     @ApiOperation({ summary: 'Delete a role' })
-    @Permissions('roles.read')
+    @Permissions('roles.delete')
     deleteRole(@Param('id') id: string) {
         return this.rbacService.deleteRole(+id);
     }
