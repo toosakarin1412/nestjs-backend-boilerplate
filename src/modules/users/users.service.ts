@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -15,6 +15,9 @@ export class UsersService {
     private usersRepository: Repository<User>,
     private readonly rbacService: RbacService,
   ) { }
+
+  private readonly logger = new Logger(UsersService.name);
+
 
   async create(createUserDto: CreateUserDto) {
     const roleName = createUserDto.role;
@@ -58,7 +61,7 @@ export class UsersService {
   findOneByUsername(username: string) {
     return this.usersRepository.findOne({
       where: { email: username },
-      select: ['user_id', 'user_uuid', 'email', 'phone', 'avatar'],
+      select: ['user_id', 'user_uuid', 'email', 'phone', 'avatar', 'password'],
       relations: ['role']
     });
   }
@@ -66,20 +69,20 @@ export class UsersService {
   findByEmail(email: string) {
     return this.usersRepository.findOne({
       where: { email },
-      select: ['user_id', 'user_uuid', 'email', 'phone', 'avatar'],
-      relations: ['role']
+      select: ['user_id', 'user_uuid', 'email', 'phone', 'avatar', 'password'],
+      relations: ['role', 'role.permissions']
     });
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     const updateData: any = { ...updateUserDto };
 
-    if (updateUserDto.role) {
+    if (updateUserDto?.role) {
       const role = await this.rbacService.findRoleByName(updateUserDto.role);
       updateData.role = role;
     }
 
-    if (updateUserDto.password) {
+    if (updateUserDto?.password) {
       const salt = randomBytes(16);
       const saltHex = salt.toString('hex');
       updateData.password = await argon2.hash(updateUserDto.password, { salt });
@@ -103,7 +106,10 @@ export class UsersService {
   }
 
   async remove(id: string) {
-    await this.usersRepository.delete({ user_uuid: id });
+    const result = await this.usersRepository.delete({ user_uuid: id });
+    if (result.affected === 0) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
     return { deleted: true };
   }
 

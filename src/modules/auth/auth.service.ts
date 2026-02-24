@@ -29,6 +29,7 @@ export class AuthService {
       sub: user.user_uuid,
       email: user.email,
       role: user.role?.name,
+      permissions: user.role?.permissions?.map(p => p.name) || [],
     };
 
     return {
@@ -47,6 +48,7 @@ export class AuthService {
       sub: user.userId,
       email: user.email,
       role: user.role,
+      permissions: user.permissions || [],
     };
 
     return {

@@ -31,10 +31,10 @@ export class Rbac1768215022871 implements MigrationInterface {
         await queryRunner.query(`INSERT INTO \`permission\` (name, description) VALUES ('roles.update', 'Update role')`);
         await queryRunner.query(`INSERT INTO \`permission\` (name, description) VALUES ('roles.delete', 'Delete role')`);
 
-        await queryRunner.query(`INSERT INTO \`permission\` (name, description) VALUES ('permissions.create', 'Create permission')`);
         await queryRunner.query(`INSERT INTO \`permission\` (name, description) VALUES ('permissions.read', 'Read permission')`);
-        await queryRunner.query(`INSERT INTO \`permission\` (name, description) VALUES ('permissions.update', 'Update permission')`);
-        await queryRunner.query(`INSERT INTO \`permission\` (name, description) VALUES ('permissions.delete', 'Delete permission')`);
+        // await queryRunner.query(`INSERT INTO \`permission\` (name, description) VALUES ('permissions.create', 'Create permission')`);
+        // await queryRunner.query(`INSERT INTO \`permission\` (name, description) VALUES ('permissions.update', 'Update permission')`);
+        // await queryRunner.query(`INSERT INTO \`permission\` (name, description) VALUES ('permissions.delete', 'Delete permission')`);
 
         // Add all permissions to superadmin role
         await queryRunner.query(`INSERT INTO \`role_permissions_permission\` (roleId, permissionId) SELECT \`role\`.id, \`permission\`.id FROM \`role\` JOIN \`permission\` ON \`permission\`.name != 'superadmin'`);

@@ -13,7 +13,7 @@ export class SeedSuperadmin1766918000000 implements MigrationInterface {
         const userUuid = uuidv7();
 
         await queryRunner.query(
-            `INSERT INTO \`user\` (user_uuid, email, password, role, salt) VALUES ('${userUuid}', 'superadmin@example.com', '${hashedPassword}', 'superadmin', '${saltHex}')`
+            `INSERT INTO \`user\` (user_uuid, email, password, role, name, salt) VALUES ('${userUuid}', 'superadmin@example.com', '${hashedPassword}', 'superadmin', 'Superadmin','${saltHex}')`
         );
     }
 

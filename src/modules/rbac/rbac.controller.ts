@@ -1,12 +1,12 @@
 
-import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards, Logger } from '@nestjs/common';
 import { RbacService } from './rbac.service';
 import { CreateRoleDto } from './dto/create-role.dto';
-import { CreatePermissionDto } from './dto/create-permission.dto';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { JwtGuard } from '../auth/guard/jwt-auth.guard';
 import { PermissionsGuard } from './guards/permissions.guard';
 import { Permissions } from './decorators/permissions.decorator';
+// import { CreatePermissionDto } from './dto/create-permission.dto';
 
 @ApiTags('RBAC')
 @Controller('rbac')
@@ -14,12 +14,14 @@ import { Permissions } from './decorators/permissions.decorator';
 export class RbacController {
     constructor(private readonly rbacService: RbacService) { }
 
-    @Post('permissions')
-    @ApiOperation({ summary: 'Create a new permission' })
-    @Permissions('permissions.create')
-    createPermission(@Body() createPermissionDto: CreatePermissionDto) {
-        return this.rbacService.createPermission(createPermissionDto);
-    }
+    private readonly logger = new Logger(RbacController.name);
+
+    // @Post('permissions')
+    // @ApiOperation({ summary: 'Create a new permission' })
+    // @Permissions('permissions.create')
+    // createPermission(@Body() createPermissionDto: CreatePermissionDto) {
+    //     return this.rbacService.createPermission(createPermissionDto);
+    // }
 
     @Get('permissions')
     @ApiOperation({ summary: 'Get all permissions' })
@@ -61,5 +63,33 @@ export class RbacController {
     @Permissions('roles.read')
     deleteRole(@Param('id') id: string) {
         return this.rbacService.deleteRole(+id);
+    }
+
+    @Post('roles/:id/permissions/bulk')
+    @ApiOperation({ summary: 'Add multiple permissions to a role' })
+    @Permissions('roles.update')
+    addPermissionsToRole(@Param('id') id: string, @Body() data: { permissionIds: number[] }) {
+        return this.rbacService.addPermissionsToRole(+id, data.permissionIds);
+    }
+
+    @Delete('roles/:id/permissions/bulk')
+    @ApiOperation({ summary: 'Remove multiple permissions from a role' })
+    @Permissions('roles.update')
+    removePermissionsFromRole(@Param('id') id: string, @Body() data: { permissionIds: number[] }) {
+        return this.rbacService.removePermissionsFromRole(+id, data.permissionIds);
+    }
+
+    @Post('roles/:id/permissions/:permissionId')
+    @ApiOperation({ summary: 'Add a permission to a role' })
+    @Permissions('roles.update')
+    addPermissionToRole(@Param('id') id: string, @Param('permissionId') permissionId: string) {
+        return this.rbacService.addPermissionToRole(+id, +permissionId);
+    }
+
+    @Delete('roles/:id/permissions/:permissionId')
+    @ApiOperation({ summary: 'Remove a permission from a role' })
+    @Permissions('roles.update')
+    removePermissionFromRole(@Param('id') id: string, @Param('permissionId') permissionId: string) {
+        return this.rbacService.removePermissionFromRole(+id, +permissionId);
     }
 }

@@ -6,17 +6,18 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()
-    .setTitle('Costera API')
-    .setDescription('The Costera API description')
+    .setTitle('Nest API')
+    .setDescription('The Backend API description')
     .setVersion('1.0')
     .addTag('costera')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.APP_PORT ?? 4000);
 }
 bootstrap();
