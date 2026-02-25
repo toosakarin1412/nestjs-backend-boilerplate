@@ -42,7 +42,7 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Avatar updated successfully' })
   @UseInterceptors(FileInterceptor('file', {
     storage: diskStorage({
-      destination: process.env.AVATAR_PATH || './uploads',
+      destination: process.env.AVATAR_PATH || './uploads/avatar',
       filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
         const ext = extname(file.originalname);
@@ -51,7 +51,17 @@ export class UsersController {
     }),
   }))
   updateAvatar(@Param('id') id: string, @UploadedFile() file: Express.Multer.File) {
-    return this.usersService.updateAvatar(id, file.path);
+    // Save relative forward-slash path so it works everywhere
+    const urlPath = `uploads/avatar/${file.filename}`;
+    return this.usersService.updateAvatar(id, urlPath);
+  }
+
+  @Get(':id/avatar')
+  @ApiOperation({ summary: 'Get user avatar path' })
+  @ApiResponse({ status: 200, description: 'The user avatar path' })
+  async getAvatar(@Param('id') id: string) {
+    const user = await this.usersService.findOne(id);
+    return { avatar: user?.avatar || null };
   }
 
   @Get()

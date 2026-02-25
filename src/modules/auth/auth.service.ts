@@ -30,6 +30,7 @@ export class AuthService {
       email: user.email,
       role: user.role?.name,
       permissions: user.role?.permissions?.map(p => p.name) || [],
+      avatar: user.avatar || null,
     };
 
     return {
@@ -49,6 +50,7 @@ export class AuthService {
       email: user.email,
       role: user.role,
       permissions: user.permissions || [],
+      avatar: user.avatar || null,
     };
 
     return {
