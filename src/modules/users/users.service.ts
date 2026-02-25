@@ -21,7 +21,7 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     const roleName = createUserDto.role;
-    const role = await this.rbacService.findRoleByName(roleName);
+    const role = await this.rbacService.findRoleById(roleName);
 
     // Create payload compatible with User entity
     const userPayload = {
@@ -78,7 +78,7 @@ export class UsersService {
     const updateData: any = { ...updateUserDto };
 
     if (updateUserDto?.role) {
-      const role = await this.rbacService.findRoleByName(updateUserDto.role);
+      const role = await this.rbacService.findRoleById(updateUserDto.role);
       updateData.role = role;
     }
 
