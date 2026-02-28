@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nes
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 import { LoginDto } from './dto/login.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { RefreshJwtGuard } from './guard/jwt-refresh.guard';
 import { JwtGuard } from './guard/jwt-auth.guard';
 
@@ -12,6 +13,13 @@ export class AuthController {
   constructor(private authService: AuthService) { }
 
   private readonly logger = new Logger(AuthController.name);
+
+  @Post('forgot-password')
+  @ApiOperation({ summary: 'Request password reset' })
+  @ApiResponse({ status: 200, description: 'Reset email sent' })
+  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+    return await this.authService.forgotPassword(forgotPasswordDto.email);
+  }
 
   @UseGuards(LocalAuthGuard)
   @Post('login')

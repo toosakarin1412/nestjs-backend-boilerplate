@@ -12,6 +12,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { RbacModule } from './modules/rbac/rbac.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { MailModule } from './modules/mail/mail.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -22,6 +23,7 @@ import { join } from 'path';
     UsersModule,
     AuthModule,
     RbacModule,
+    MailModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'uploads','avatar'), // Path to your 'uploads' folder
       serveRoot: '/uploads/avatar', // URL prefix to access the files (e.g., http://localhost:3000/uploads/avatar/imagename.png)

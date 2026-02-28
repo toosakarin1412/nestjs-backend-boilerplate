@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
@@ -22,6 +22,18 @@ export class AuthService {
       return result;
     }
     return null;
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.userService.findByEmail(email);
+    if (!user) {
+      throw new NotFoundException('Email is not exist');
+    }
+
+    // TODO: Generate password reset token
+    // TODO: Send password reset email
+    
+    return { success: true, message: 'Reset email has been sent' };
   }
 
   async login(user: User) {
