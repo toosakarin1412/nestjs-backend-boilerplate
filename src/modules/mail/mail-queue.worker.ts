@@ -43,7 +43,7 @@ export class MailQueueWorker {
       const pendingEmails = await transactionalEntityManager
         .createQueryBuilder(MailQueue, 'mail_queue')
         .where('mail_queue.status = :status', { status: MailQueueStatus.PENDING })
-        .andWhere('mail_queue.available_at <= NOW()')
+        .andWhere('mail_queue.available_at <= :now', { now: new Date() })
         .orderBy('mail_queue.priority', 'ASC')
         .addOrderBy('mail_queue.created_at', 'ASC')
         .limit(10)
@@ -52,6 +52,7 @@ export class MailQueueWorker {
         .getMany();
 
       if (pendingEmails.length === 0) {
+        this.logger.debug('No Email to Send')
         return;
       }
 
