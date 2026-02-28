@@ -5,12 +5,12 @@ import { SendMailDto } from './dto/send-mail.dto';
 import { GetMailQueryDto } from './dto/get-mail-query.dto';
 import { JwtGuard } from '../auth/guard/jwt-auth.guard';
 import { PermissionsGuard } from '../rbac/guards/permissions.guard';
+import { Permissions } from '../rbac/decorators/permissions.decorator';
 
 @ApiTags('Mail')
 @ApiBearerAuth()
 @Controller('mail')
-// We can use guards if needed. For now, we will just protect the endpoint with JwtGuard to ensure only authenticated users can test it
-// @UseGuards(JwtGuard)
+@UseGuards(JwtGuard, PermissionsGuard)
 export class MailController {
   constructor(private readonly mailService: MailService) {}
 
@@ -55,6 +55,7 @@ export class MailController {
   @UseGuards(JwtGuard)
   @ApiOperation({ summary: 'Get paginated list of email statuses' })
   @ApiResponse({ status: 200, description: 'Return email statuses' })
+  @Permissions('mail.read')
   async getMailStatuses(@Query() query: GetMailQueryDto) {
     return this.mailService.getMailStatuses(query);
   }
