@@ -95,9 +95,9 @@ export class PasswordResetService {
     }
 
     // 5. Hash new password and update the user via UsersService
-    const newPasswordHash = await argon2.hash(newPassword);
+    // const newPasswordHash = await argon2.hash(newPassword);
     
-    await this.usersService.update(user.user_uuid, { password: newPasswordHash } as any);
+    await this.usersService.update(user.user_uuid, { password: newPassword } as any);
 
     // 6. Mark token as used
     resetRecord.usedAt = new Date();
