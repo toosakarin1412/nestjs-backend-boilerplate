@@ -6,6 +6,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtGuard } from '../auth/guard/jwt-auth.guard';
 import { PermissionsGuard } from '../rbac/guards/permissions.guard';
 import { Permissions } from '../rbac/decorators/permissions.decorator';
+import { LogAction } from '../audit/decorators/log-action.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -21,6 +22,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Create user' })
   @ApiResponse({ status: 201, description: 'The user has been successfully created.' })
   @Permissions('users.create')
+  @LogAction('CREATE', 'User')
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
@@ -40,6 +42,7 @@ export class UsersController {
     },
   })
   @ApiResponse({ status: 200, description: 'Avatar updated successfully' })
+  @LogAction('UPDATE_AVATAR', 'User')
   @UseInterceptors(FileInterceptor('file', {
     storage: diskStorage({
       destination: process.env.AVATAR_PATH || './uploads/avatar',
@@ -84,6 +87,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Update user' })
   @ApiResponse({ status: 200, description: 'The updated user' })
   @Permissions('users.update')
+  @LogAction('UPDATE', 'User')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
@@ -92,6 +96,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Delete user' })
   @ApiResponse({ status: 200, description: 'User deleted' })
   @Permissions('users.delete')
+  @LogAction('DELETE', 'User')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }
