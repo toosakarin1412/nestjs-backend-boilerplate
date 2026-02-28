@@ -30,4 +30,23 @@ export class MailController {
       throw new InternalServerErrorException('Failed to send test email. Check server logs.');
     }
   }
+
+  @Post('enqueue-test')
+  @ApiOperation({ summary: 'Test enqueueing an email via DB queue' })
+  @ApiResponse({ status: 201, description: 'Email has been enqueued successfully' })
+  @ApiResponse({ status: 500, description: 'Failed to enqueue email' })
+  async enqueueTestMail(@Body() body: { to: string, subject: string, template_id: string, payload: any, priority?: number }) {
+    try {
+      const result = await this.mailService.enqueue(
+        body.to,
+        body.subject,
+        body.template_id,
+        body.payload,
+        body.priority
+      );
+      return result;
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to enqueue test email. Check server logs.');
+    }
+  }
 }

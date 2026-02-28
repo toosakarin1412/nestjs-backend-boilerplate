@@ -13,12 +13,14 @@ import { RbacModule } from './modules/rbac/rbac.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { MailModule } from './modules/mail/mail.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true,
     envFilePath: '.env',
   }),
+  ScheduleModule.forRoot(),
   TypeOrmModule.forRoot(dbConfig),
     UsersModule,
     AuthModule,

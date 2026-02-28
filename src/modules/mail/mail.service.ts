@@ -1,12 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { MailQueue } from './entities/mail-queue.entity';
 
 @Injectable()
 export class MailService {
   private transporter: nodemailer.Transporter;
   private readonly logger = new Logger(MailService.name);
 
-  constructor() {
+  constructor(
+    @InjectRepository(MailQueue)
+    private mailQueueRepository: Repository<MailQueue>,
+  ) {
     this.transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT) || 587,
@@ -51,5 +57,19 @@ export class MailService {
       this.logger.error('Failed to send email:', error);
       throw error;
     }
+  }
+
+  async enqueue(recipient: string, subject: string, template_id: string, payload: any, priority: number = 0) {
+    const queueItem = this.mailQueueRepository.create({
+      recipient,
+      subject,
+      template_id,
+      payload,
+      priority,
+    });
+    
+    await this.mailQueueRepository.save(queueItem);
+    this.logger.log(`[MailService] Enqueued email for ${recipient} with template ${template_id}`);
+    return queueItem;
   }
 }

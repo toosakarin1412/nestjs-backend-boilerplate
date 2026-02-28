@@ -27,7 +27,7 @@ export class AuthService {
   async forgotPassword(email: string) {
     const user = await this.userService.findByEmail(email);
     if (!user) {
-      throw new NotFoundException('Email is not exist');
+      throw new NotFoundException('Account is not exist');
     }
 
     // TODO: Generate password reset token
