@@ -10,7 +10,7 @@ export class User {
     user_id: number;
 
     @Index()
-    @Column()
+    @Column({ type: 'varchar', length: 36 })
     user_uuid: string;
 
     @Column({ unique: false })

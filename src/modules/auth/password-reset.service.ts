@@ -48,7 +48,7 @@ export class PasswordResetService {
     await this.passwordResetRepository.save(resetRecord);
 
     const frontendUrl = process.env.FRONTEND_LINK || 'http://localhost:3000';
-    const resetLink = `${frontendUrl}/reset-password/${rawToken}`;
+    const resetLink = `${frontendUrl}/reset-password?token=${rawToken}`;
 
     // 5. Enqueue email with the raw token
     // Using the queue system built earlier

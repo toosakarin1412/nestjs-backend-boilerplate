@@ -52,7 +52,6 @@ export class MailQueueWorker {
         .getMany();
 
       if (pendingEmails.length === 0) {
-        this.logger.debug('No Email to Send')
         return;
       }
 
