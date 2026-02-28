@@ -3,6 +3,7 @@ import * as nodemailer from 'nodemailer';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MailQueue } from './entities/mail-queue.entity';
+import { GetMailQueryDto } from './dto/get-mail-query.dto';
 
 @Injectable()
 export class MailService {
@@ -71,5 +72,39 @@ export class MailService {
     await this.mailQueueRepository.save(queueItem);
     this.logger.log(`[MailService] Enqueued email for ${recipient} with template ${template_id}`);
     return queueItem;
+  }
+
+  async getMailStatuses(query: GetMailQueryDto) {
+    const { page = 1, limit = 10, search, status } = query;
+    const skip = (page - 1) * limit;
+
+    const queryBuilder = this.mailQueueRepository.createQueryBuilder('mail');
+
+    if (search) {
+      queryBuilder.andWhere(
+        '(LOWER(mail.recipient) LIKE LOWER(:search) OR LOWER(mail.subject) LIKE LOWER(:search))',
+        { search: `%${search}%` }
+      );
+    }
+
+    if (status) {
+      queryBuilder.andWhere('mail.status = :status', { status });
+    }
+
+    queryBuilder.orderBy('mail.created_at', 'DESC')
+                .skip(skip)
+                .take(limit);
+
+    const [data, total] = await queryBuilder.getManyAndCount();
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 }

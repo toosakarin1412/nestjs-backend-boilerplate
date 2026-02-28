@@ -1,7 +1,8 @@
-import { Controller, Post, Body, UseGuards, InternalServerErrorException } from '@nestjs/common';
+import { Controller, Post, Get, Query, Body, UseGuards, InternalServerErrorException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { MailService } from './mail.service';
 import { SendMailDto } from './dto/send-mail.dto';
+import { GetMailQueryDto } from './dto/get-mail-query.dto';
 import { JwtGuard } from '../auth/guard/jwt-auth.guard';
 import { PermissionsGuard } from '../rbac/guards/permissions.guard';
 
@@ -48,5 +49,13 @@ export class MailController {
     } catch (error) {
       throw new InternalServerErrorException('Failed to enqueue test email. Check server logs.');
     }
+  }
+
+  @Get('status')
+  @UseGuards(JwtGuard)
+  @ApiOperation({ summary: 'Get paginated list of email statuses' })
+  @ApiResponse({ status: 200, description: 'Return email statuses' })
+  async getMailStatuses(@Query() query: GetMailQueryDto) {
+    return this.mailService.getMailStatuses(query);
   }
 }
