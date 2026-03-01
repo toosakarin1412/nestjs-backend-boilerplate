@@ -26,6 +26,7 @@ async function seed() {
             { name: 'roles.delete', description: 'Delete role' },
             { name: 'permissions.read', description: 'Read permission' },
             { name: 'mail.read', description: 'Read Mail' },
+            { name: 'audit.read', description: 'Read Audit Log' },
         ];
 
         console.log('Seeding permissions...');

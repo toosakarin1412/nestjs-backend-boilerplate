@@ -39,7 +39,7 @@ export class AuditInterceptor implements NestInterceptor {
       tap({
         next: (data: any) => {
           const logData: Partial<AuditLog> = {
-            userId: user?.user_uuid || user?.user_id?.toString() || user?.id || null,
+            userId: user?.user_uuid || null,
             action: actionMeta.action,
             entity: actionMeta.entity,
             metadata: {
@@ -58,7 +58,7 @@ export class AuditInterceptor implements NestInterceptor {
         },
         error: (error: any) => {
           const logData: Partial<AuditLog> = {
-            userId: user?.user_uuid || user?.user_id?.toString() || user?.id || null,
+            userId: user?.user_uuid || null,
             action: actionMeta.action,
             entity: actionMeta.entity,
             metadata: {
